@@ -200,7 +200,7 @@ openshift.withCluster() {
 
           dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}"
           
-          openshift.set("image", "dc/${destApp}", "${destApp}=docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}")
+          //openshift.set("image", "dc/${destApp}", "${destApp}=docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}")
           
           //Set version env flag
           dc.spec.template.spec.containers[0].env[0].value="${prodTag} ${destApp}"
