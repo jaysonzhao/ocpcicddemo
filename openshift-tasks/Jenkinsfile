@@ -174,6 +174,8 @@ openshift.withCluster() {
           activeApp = openshift.selector("route", "tasks").object().spec.to.name
           if (activeApp == "tasks-green") {
             destApp = "tasks-blue"
+          }else if (activeApp == "tasks-blue") {
+            destApp = "tasks-green"
           }
           echo "Active Application:      " + activeApp
           echo "Destination Application: " + destApp
