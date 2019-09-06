@@ -159,7 +159,7 @@ openshift.withCluster() {
 
       // Blue/Green Deployment into Production
       // -------------------------------------
-      def destApp   = "tasks-green"
+      def destApp   = "tasks-blue"
       def activeApp = ""
 
       stage('Blue/Green Production Deployment') {
