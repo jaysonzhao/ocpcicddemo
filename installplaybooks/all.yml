@@ -1,0 +1,32 @@
+- hosts: dev
+  name: install corepanel
+  roles:
+  - corepanel 
+  
+  
+- hosts: dev
+  name: install nexus
+  roles:
+  - nexus3
+ 
+ 
+- hosts: dev
+  name: install gogs
+  roles:
+  - gogs
+  
+- hosts: dev
+  name: install keycloak
+  roles:
+  - keycloak
+  
+  
+- hosts: dev
+  name: install activeMQ
+  roles:
+  - activeMQ
+   
+- hosts: dev
+  name: install mysql5_6
+  roles:
+  - mysql56

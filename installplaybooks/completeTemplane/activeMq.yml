@@ -1,0 +1,16 @@
+- hosts: dev
+  name: install keycloak
+  remote_user: root
+  tasks:
+    - name:  login ocp 
+      command: oc login --token=9IBxvlTi2-uVNpQHdbAhXyPlo9Pik0N77EvV1USi1TY --server=https://api.hzocp.sandbox801.opentlc.com:6443
+    - name:  create project 
+      command: oc new-project activemq
+    - name:  remove old file 
+      command: rm -rf openshift-template.yaml
+    - name: get  attr config
+      command: wget https://raw.githubusercontent.com/natronq/openshift-activemq/master/openshift-template.yaml
+    - name: create appliaction 
+      shell: oc process -f openshift-template.yaml | oc apply -f - 
+    - name:  remove old file 
+      command: rm -rf openshift-template.yaml

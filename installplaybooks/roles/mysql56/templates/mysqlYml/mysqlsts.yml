@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: mysqlsts
+spec:
+  selector:
+     matchLabels:
+      app: mysqlsts
+  serviceName: "mysqlsts"
+  podManagementPolicy: Parallel
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysqlsts
+    spec:
+      volumes:
+      - name: mysql-config
+        configMap:
+            name: mysql
+            defaultMode: 420
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysqlsts
+        image: mysql:5.6
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: openagiledb
+        - name: MYSQL_USER
+          value: admin
+        - name: MYSQL_PASSWORD
+          value: admin
+        - name: MYSQL_LOWER_CASE_TABLE_NAMES
+          value: '1'
+           
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysqlsts-data
+          mountPath: /var/lib/mysql
+        - name: mysql-config
+          mountPath: /etc/mysql/conf.d
+          
+  volumeClaimTemplates:
+  - metadata:
+      name: mysqlsts-data
+    spec:
+      storageClassName: gp2
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 3Gi
+  - metadata:
+      name: config-map
+    spec:
+      storageClassName: gp2
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 3Gi        
+          

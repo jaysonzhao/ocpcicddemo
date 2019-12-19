@@ -1,0 +1,41 @@
+- hosts: dev
+  name: install mysqlcustom
+  remote_user: root
+  tasks:
+    - name:  login ocp 
+      command: oc login --token=VcB0GjgALr321SUrWPuzYm90tLKyOFE9NG-FpFJRtdA --server=https://api.hzocp.sandbox801.opentlc.com:6443
+      register: result
+      notify: mysqlhandlers
+    - name:  create project 
+      command: oc new-project mysqlcustom
+      register: result
+      notify: mysqlhandlers
+    - name:  import image
+      command: oc import-image docker.io/mysql:5.7  --confirm --insecure
+      register: result
+      notify: mysqlhandlers          
+    - name:  oc new-app
+      command: oc new-app -e MYSQL_USER=data -e MYSQL_PASSWORD=data -e MYSQL_DATABASE=data -e MYSQL_ROOT_PASSWORD=root  -e MYSQL_LOWER_CASE_TABLE_NAMES=1  docker.io/mysql:5.7
+      register: result
+      notify: mysqlhandlers     
+    - name:  create pv
+      command: oc create -f  ../roles/mysql57/vars/PersistentVolumeClaimConfig/nfs-pv.yaml
+      register: result
+      notify: mysqlhandlers
+    - name:  create pv
+      command: oc create -f ../roles/mysql57/vars/PersistentVolumeClaimConfig/nfs-pvc.yaml
+      register: result
+      notify: mysqlhandlers
+    - name:  remove  volume
+      command: oc  set volume dc/mysql --remove --name=mysql-volume-1
+      register: result
+      notify: mysqlhandlers
+    - name:  add  volume
+      command: oc  set  volume dc/mysql --add  --type=persistentVolumeClaim  --claim-name=db-mysql-data-1   --name=mysql-volume-2 --mount-path=/var/lib/mysql
+      register: result
+      notify: mysqlhandlers
+      
+  handlers:                                          
+    - name: mysqlhandlers
+      command: oc delete project  mysqlcustom
+      when: "result.stdout=='' " 
